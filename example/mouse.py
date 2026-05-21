@@ -3,7 +3,7 @@ import cv2
 from typing import Optional
 
 from core import Robot, Visualizer, Waypoint
-from control import PID
+from control import PID, PIDGains, PIDParams
 
 
 class MouseHandler:
@@ -31,7 +31,11 @@ def main() -> None:
     handler = MouseHandler()
     viz = Visualizer((500, 500), "Mouse Tracking", handler.callback)
     robot = Robot(250, 250)
-    ctrl = PID()
+    ctrl = PID(PIDParams(
+        v=PIDGains(Kp=0.5, Ki=0.0, Kd=0.1),
+        w=PIDGains(Kp=0.9, Ki=0.0, Kd=0.1),
+        threshold=10
+    ))
 
     index: int = 0
     history: list[tuple[int, int]] = []
