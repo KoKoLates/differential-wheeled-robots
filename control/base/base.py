@@ -11,7 +11,8 @@ class Control(ABC):
         self,
         state: np.ndarray, 
         waypoints: list[Waypoint], 
-        index: int
+        index: int,
+        dt: float = 0.5
     ) -> tuple[float, float, int]:
         """
         @param state: robot state `(x, y, theta)`

@@ -33,7 +33,8 @@ class PID(Control):
         self,
         state: np.ndarray,
         waypoints: list[Waypoint],
-        index: int
+        index: int,
+        dt: float = 0.5
     ) -> tuple[float, float, int]:
         target = (waypoints[index].x, waypoints[index].y)
         pose = tuple(state[:2].flatten())
