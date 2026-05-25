@@ -57,3 +57,7 @@ class PurePursuit(Control):
                 return i
             
         return len(waypoints) - 1
+
+    @property
+    def name(self) -> str:
+        return "pure_pursuit"

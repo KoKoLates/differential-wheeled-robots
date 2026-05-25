@@ -38,3 +38,7 @@ class Control(ABC):
     @staticmethod
     def _wrap_angle(angle: float) -> float:
         return math.atan2(math.sin(angle), math.cos(angle))
+
+    @property
+    def name(self) -> str:
+        return self.__class__.__name__.lower()
