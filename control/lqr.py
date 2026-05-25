@@ -10,13 +10,13 @@ from scipy.linalg import solve_discrete_are
 
 @dataclass
 class LQRParams:
-    Q: np.ndarray = field(default_factory=lambda: np.diag([1.0, 1.0, 0.5]))
-    R: np.ndarray = field(default_factory=lambda: np.diag([0.1, 0.1]))
-    v_ref: float  = 2.0
+    Q: np.ndarray = field(default_factory=lambda: np.diag([3.0, 3.0, 0.15]))
+    R: np.ndarray = field(default_factory=lambda: np.diag([0.5, 25.0]))
+    v_ref: float  = 5.0
     v_max: float  = 10.0
     w_max: float  = math.pi
     threshold: float   = 15.0
-    heading_tol: float = 0.1
+    heading_tol: float = 0.05
 
 
 class LQR(Control):
@@ -41,9 +41,11 @@ class LQR(Control):
             self.last_heading = target.heading
 
         x_ref = np.array((target.x, target.y, target.heading)).reshape(3, 1)
-        du = -self.K @ (state - x_ref)
+        e = state - x_ref
+        e[2, 0] = self._wrap_angle(e[2, 0])
+        du = -self.K @ (e)
         
-        ctrl_v = float(np.clip(self.params.v_ref + du[0, 0], -self.params.v_max, self.params.v_max))
+        ctrl_v = float(np.clip(self.params.v_ref + du[0, 0], 0.0, self.params.v_max))
         ctrl_w = float(np.clip(du[1, 0], -self.params.w_max, self.params.w_max))
 
         pose = tuple(state[:2].flatten())
