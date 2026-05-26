@@ -14,19 +14,17 @@ class Model(object):
         states[:, 0] = state.flatten()
 
         for i in range(horizon):
-            states[:, i+1] = Model.step(
-                states[:, i:i+1], controls[i:i+1].T, dt
-            ).flatten()
+            states[:, i+1] = Model.step(states[:, i:i+1], controls[i], dt).flatten()
 
         return states
 
     @staticmethod
     def step(state: np.ndarray, u: np.ndarray, dt: float) -> np.ndarray:
         x, y, theta = state.flatten()
-        v, w = u
+        v, w = u.flatten()
         
-        x_next      = x + v * np.cos(theta + np.pi / 2) * dt
-        y_next      = y - v * np.sin(theta + np.pi / 2) * dt
+        x_next      = x + v * np.cos(theta) * dt
+        y_next      = y - v * np.sin(theta) * dt
         theta_next  = theta + w * dt
 
         return np.array([x_next, y_next, theta_next]).reshape(3, 1)

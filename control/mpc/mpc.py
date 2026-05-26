@@ -1,20 +1,20 @@
 import math
 import numpy as np
 
-from base import Control
+from control.base import Control
 from core import Waypoint
 
-from .model import Model
+from control.mpc import Model
 from dataclasses import dataclass
 from scipy.optimize import minimize, OptimizeResult
 
 
 @dataclass
 class MPCParams:
-    horizon: int = 5
-    Q: np.ndarray = np.diag([1.0, 1.0])
-    R: np.ndarray = np.diag([0.01, 0.01])
-    Rd: np.ndarray = np.diag([0.01, 1.0])
+    horizon: int = 10
+    Q: np.ndarray = np.diag([10.0, 5.0])
+    R: np.ndarray = np.diag([0.5, 0.5])
+    Rd: np.ndarray = np.diag([0.5, 1.0])
 
     v_max: float = 10
     w_max: float = math.pi
@@ -33,8 +33,9 @@ class MPC(Control):
         index: int,
         dt: float = 0.5
     ) -> tuple[float, float, int]:
+
         bounds: list = [
-            (-self.params.v_max, self.params.v_max),
+            (0, self.params.v_max),
             (-self.params.w_max, self.params.w_max)
         ] * self.params.horizon
 
@@ -42,8 +43,8 @@ class MPC(Control):
         pose = tuple(state[:2].flatten())
         
         ctrl: OptimizeResult = minimize(
-            self._cost,
-            np.zeros((self.params.horizon, 2)),
+            fun=self._cost,
+            x0=np.tile([1.0, 0.0], self.params.horizon),
             args=(state, np.array(target), dt),
             method="SLSQP",
             bounds=bounds
@@ -64,15 +65,19 @@ class MPC(Control):
         u_k = x0.reshape(self.params.horizon, 2)
         x_k = Model.rollout(state, u_k, dt)
 
-        # input cost
-        cost = np.sum(self.params.R @ (u_k**2))
+        r  = np.diag(self.params.R)
+        rd = np.diag(self.params.Rd)
+        q  = np.diag(self.params.Q)
 
-        # input difference cost
-        diff = np.diff(u_k, axis=1)
-        cost += np.sum(self.params.Rd @ (diff**2))
+        cost = np.sum((u_k ** 2) * r)
 
-        # state cost
-        err = target[:, np.newaxis] - x_k[:,:-1]
-        cost += np.sum(self.params.Q @ (err**2))
+        diff = np.diff(u_k, axis=0)
+        cost += np.sum((diff ** 2) * rd)
+
+        err = target[:, np.newaxis] - x_k[:2, :-1]
+        cost += np.sum((err.T ** 2) * q)
 
         return float(cost)
+    
+    def reset(self) -> None:
+        pass
