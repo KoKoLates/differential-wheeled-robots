@@ -5,17 +5,16 @@ from control.base import Control
 from core import Waypoint
 
 from control.mpc import Model
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from scipy.optimize import minimize, OptimizeResult
 
 
 @dataclass
 class MPCParams:
     horizon: int = 10
-    Q: np.ndarray = np.diag([10.0, 5.0])
-    R: np.ndarray = np.diag([0.5, 0.5])
-    Rd: np.ndarray = np.diag([0.5, 1.0])
-
+    Q: np.ndarray  = field(default_factory=lambda: np.diag([10.0, 5.0]))
+    R: np.ndarray  = field(default_factory=lambda: np.diag([0.5, 0.5]))
+    Rd: np.ndarray = field(default_factory=lambda: np.diag([0.5, 1.0]))
     v_max: float = 10
     w_max: float = math.pi
     threshold: float = 15
