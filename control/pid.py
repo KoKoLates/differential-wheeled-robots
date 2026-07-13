@@ -41,7 +41,7 @@ class PID(Control):
         head = float(state[2, 0])
 
         err_v = self._distance(pose, target)
-        err_w = self._wrap_angle(-self._bearing(pose, target) - head)
+        err_w = self._wrap_angle(self._bearing(pose, target) - head)
 
         self.hist_err_v += err_v
         self.hist_err_w += err_w

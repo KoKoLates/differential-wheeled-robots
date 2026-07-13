@@ -24,7 +24,7 @@ class Model(object):
         v, w = u.flatten()
         
         x_next      = x + v * np.cos(theta) * dt
-        y_next      = y - v * np.sin(theta) * dt
+        y_next      = y + v * np.sin(theta) * dt
         theta_next  = theta + w * dt
 
         return np.array([x_next, y_next, theta_next]).reshape(3, 1)

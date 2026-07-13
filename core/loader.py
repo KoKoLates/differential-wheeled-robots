@@ -23,7 +23,7 @@ def load_map(file_path: str) -> list[Waypoint]:
     for i in range(len(waypoints) - 1):
         dx = waypoints[i+1].x - waypoints[i].x
         dy = waypoints[i+1].y - waypoints[i].y
-        waypoints[i].heading = math.atan2(-dy, dx)
+        waypoints[i].heading = math.atan2(dy, dx)
     waypoints[-1].heading = waypoints[-2].heading
     
     return waypoints

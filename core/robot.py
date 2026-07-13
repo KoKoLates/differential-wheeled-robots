@@ -23,8 +23,8 @@ class Robot(object):
         self._forward()
 
         mat: np.ndarray = np.array([
-            [np.sin(self.p[2, 0] + np.pi / 2) * dt, 0],
-            [np.cos(self.p[2, 0] + np.pi / 2) * dt, 0],
+            [np.cos(self.p[2, 0]) * dt, 0],
+            [np.sin(self.p[2, 0]) * dt, 0],
             [0, dt]
         ])
         vel: np.ndarray = self.v[[0, 2], :]
@@ -70,8 +70,8 @@ class Robot(object):
 
     def _update_polygon(self) -> None:
         mat: np.ndarray = np.array([
-            [ np.cos(self.p[2, 0]), np.sin(self.p[2, 0]), self.p[0, 0]],
-            [-np.sin(self.p[2, 0]), np.cos(self.p[2, 0]), self.p[1, 0]],
+            [np.cos(self.p[2, 0]), -np.sin(self.p[2, 0]), self.p[0, 0]],
+            [np.sin(self.p[2, 0]),  np.cos(self.p[2, 0]), self.p[1, 0]],
             [0, 0, 1]
         ])
-        self.polygon = (self.framework @ mat.T).astype(int)
+        self.polygon = self.framework @ mat.T

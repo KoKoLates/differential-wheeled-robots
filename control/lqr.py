@@ -61,11 +61,11 @@ class LQR(Control):
     def _compute_gain(self, heading: float, dt: float) -> np.ndarray:
         A: np.ndarray = np.array([
             [0, 0, -self.params.v_ref * np.sin(heading)],
-            [0, 0, -self.params.v_ref * np.cos(heading)],
+            [0, 0,  self.params.v_ref * np.cos(heading)],
             [0, 0, 0]
         ])
         B: np.ndarray = np.array([
-            [np.cos(heading), 0], [-np.sin(heading), 0], [0, 1]
+            [np.cos(heading), 0], [np.sin(heading), 0], [0, 1]
         ])
 
         Ad = np.eye(3) + A * dt

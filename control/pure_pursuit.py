@@ -32,7 +32,7 @@ class PurePursuit(Control):
         target_idx = self._find_lookahead_index(pose, waypoints, index)
         target = (waypoints[target_idx].x, waypoints[target_idx].y)
 
-        alpha = self._wrap_angle(-self._bearing(pose, target) - head)
+        alpha = self._wrap_angle(self._bearing(pose, target) - head)
 
         ctrl_v = self.params.v_ref
         ctrl_w = np.clip(

@@ -2,8 +2,9 @@ import argparse
 import numpy as np
 
 from typing import Callable
-from core import Robot, Visualizer, Waypoint
+from core import Robot, Waypoint
 from control import PID, PIDGains, PIDParams
+from visualize import LiveRenderer
 
 
 def make_square(
@@ -25,7 +26,7 @@ def make_circle(
 
 
 def run(title: str, robot: Robot, waypoints: list[Waypoint]) -> None:
-    viz = Visualizer((500, 500), title)
+    viz = LiveRenderer(title=title)
 
     ctrl = PID(PIDParams(
         v=PIDGains(Kp=0.5, Ki=0.0, Kd=0.1),
@@ -34,18 +35,18 @@ def run(title: str, robot: Robot, waypoints: list[Waypoint]) -> None:
     ))
 
     index: int = 0
-    history: list[tuple[int, int]] = []
+    history: list[tuple[float, float]] = []
     color = (20, 255, 57)
 
     while True:
         viz.clean()
 
-        viz.plot_path([(int(w.x), int(w.y)) for w in waypoints])
+        viz.plot_path([(w.x, w.y) for w in waypoints])
         viz.plot_path(history, color, dotted=True)
         viz.plot_polygon(robot.points, color)
 
         p, _ = robot.state
-        history.append((int(p[0, 0]), int(p[1, 0])))
+        history.append((float(p[0, 0]), float(p[1, 0])))
 
         if index < len(waypoints):
             v, w, index = ctrl.update(p, waypoints, index)
@@ -55,7 +56,7 @@ def run(title: str, robot: Robot, waypoints: list[Waypoint]) -> None:
         robot.set_robot_speeds(v, w)
         robot.update(0.5)
 
-        if viz.show() & 0xFF == ord("q"):
+        if viz.show():
             break
 
 
