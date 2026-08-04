@@ -1,95 +1,70 @@
+import os
 import argparse
+import numpy as np
 
-from typing import Callable
-
-from robot import Robot, PID
-from utils import WaypointHandler, Application
-
-from utils import compute_distance
-from map import square_path_generator, circle_path_generator
+from core import Robot, load_map, simulate, Waypoint
+from control import LQR, PurePursuit, PurePursuitParams, PID, PIDParams, PIDGains
+from control.mpc import MPC
 
 
-def tracking(
-    app: Application,
-    robot: Robot,
-    color: tuple[int, int, int],
-    handler: Callable[[], list[tuple[int, int]]],
-) -> None:
-    waypoints: list = handler()
-    ctrl = PID(0.5, 0, 0.1, 0.9, 0, 0.1)
+def get_ctrl():
+    return PID(PIDParams(
+        v=PIDGains(Kp=0.5, Kd=0.1),
+        w=PIDGains(Kp=0.9, Kd=0.1),
+        threshold=30
+    ))
+    # return PurePursuit(PurePursuitParams(
+    #     L = 30, v_ref=10
+    # ))
+    # return LQR()
+    # return MPC()
 
-    index: int = 0
-    history: list[tuple[int, int]] = []
-
-    while True:
-        app.clean()
-        app.plot(robot.points, color)
-        app.plot_path(history, color, True)
-        app.plot_path(waypoints)
-
-        p, _ = robot.state
-        if len(waypoints) and index < len(waypoints):
-            history.append((int(p[0, 0]), int(p[1, 0])))
-            target = waypoints[index]
-
-            v, w = ctrl.update(p, target)
-            d: float = compute_distance(tuple(p[:2].flatten()), target)
-
-            if d < 15:
-                index += 1
-        else:
-            v, w = 0, 0
-
-        robot.set_robot_speeds(v, w)
-        robot.update(0.5)
-
-        if app.show() & 0xFF == ord("q"):
-            break
+def get_robot(waypoints: list[Waypoint]):
+    first = waypoints[0]
+    return Robot(int(first.x), int(first.y))
 
 
-def cursor() -> None:
-    handler = WaypointHandler()
-    tracking(
-        Application((500, 500), "Waypoint Handler", handler.add_waypoint),
-        Robot(250, 250),
-        (20, 255, 57),
-        lambda: handler.path,
+def main(args):
+    if not os.path.exists(args.map):
+        raise FileNotFoundError(f"Map file not found: {args.map}")
+
+    waypoints = load_map(args.map)
+    robot = get_robot(waypoints)
+    ctrl = get_ctrl()
+
+    result = simulate(
+        robot, ctrl, waypoints,
+        map_name=args.map,
+        visualize=args.visualize,
+        save_log=not args.no_log,
+        log_dir=args.log_dir,
     )
 
-
-def square() -> None:
-    tracking(
-        Application((500, 500), "Square Tracking"),
-        Robot(125, 125),
-        (20, 255, 57),
-        lambda: square_path_generator(125, 125, 250, 30),
-    )
-
-
-def circle() -> None:
-    tracking(
-        Application((500, 500), "Circle Tracking"),
-        Robot(250, 130),
-        (20, 255, 57),
-        lambda: circle_path_generator(250, 250, 120),
-    )
+    print(f"Controller : {result.controller}")
+    print(f"Map        : {result.map_name}")
+    print(f"Steps      : {len(result.timestamps)}")
+    print(f"Timeout    : {result.timeout}")
+    print(f"Avg Error  : {sum(result.errors) / len(result.errors):.2f}")
+    print(f"Max Error  : {max(result.errors):.2f}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run path tracking simulation.")
+    parser = argparse.ArgumentParser(description="Differential Drive Simulation")
     parser.add_argument(
-        "-t",
-        "--type",
-        type=str,
-        default="cursor",
-        choices=["cursor", "square", "circle"],
-        help="type of simulation to be executed (default: cursor)",
+        "--map", type=str, required=True,
+        help="Path to waypoint map file"
+    )
+    parser.add_argument(
+        "--visualize", action="store_true", default=False,
+        help="Show simulation window"
+    )
+    parser.add_argument(
+        "--no-log", action="store_true", default=False,
+        help="Disable log saving"
+    )
+    parser.add_argument(
+        "--log-dir", type=str, default="logs",
+        help="Directory to save logs (default: logs)"
     )
     args = parser.parse_args()
-
-    function_table: dict[str, Callable] = {
-        "square": square,
-        "circle": circle,
-        "cursor": cursor,
-    }
-    function_table[args.type]()
+    main(args)
