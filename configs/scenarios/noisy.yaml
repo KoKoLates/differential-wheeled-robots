@@ -1,0 +1,6 @@
+description: "Pose measurement noise at 50 Hz (σ = 2 cm, 2 cm, 0.01 rad)."
+tags: [robustness]
+map: map01
+sensor:
+  period: 0.02
+  noise_std: [0.02, 0.02, 0.01]

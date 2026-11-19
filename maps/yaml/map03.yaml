@@ -1,0 +1,5 @@
+description: S-curve, 6 m, amplitude 0.75 m
+points: ../csv/map03.csv
+length: 6.839
+max_curvature: 0.822
+generator: python maps/generate.py --shape s_curve --length 6 --amplitude 0.75

@@ -1,0 +1,5 @@
+description: Circle, r = 1.5 m, counter-clockwise
+points: ../csv/map01.csv
+length: 9.425
+max_curvature: 0.667
+generator: python maps/generate.py --shape circle --radius 1.5

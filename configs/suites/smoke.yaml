@@ -1,0 +1,6 @@
+name: smoke
+description: "Infrastructure sanity: every baseline on the simplest maps, nominal conditions, one seed."
+seeds: [0]
+maps: [map00, map01, map02]
+scenarios: [nominal]
+controllers: [feedforward, pid, pure_pursuit]

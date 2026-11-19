@@ -1,0 +1,12 @@
+name: dataset
+description: "Synthetic data for imitation learning: one expert on every map under varied conditions, 10 seeds."
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+maps: [map00, map01, map02, map03, map04, map05, map06, map07]
+scenarios:
+  - nominal
+  - noisy
+  - delayed
+  - lateral_offset
+  - heading_offset
+controllers:
+  - pure_pursuit     # the expert; swap for MPC once it exists

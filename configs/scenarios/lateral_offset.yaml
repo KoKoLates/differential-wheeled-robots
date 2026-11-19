@@ -1,0 +1,4 @@
+description: "Starts 0.5 m to the left of the path: recovery / region of attraction."
+tags: [recovery]
+map: map01
+initial_error: {dy: 0.5}

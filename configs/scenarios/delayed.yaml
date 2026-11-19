@@ -1,0 +1,5 @@
+description: "40 ms sensor latency + 50 ms command latency, exact measurements."
+tags: [robustness]
+map: map01
+sensor: {latency: 0.04}
+command: {latency: 0.05}

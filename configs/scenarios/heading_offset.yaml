@@ -1,0 +1,4 @@
+description: "Starts with a 90° heading error: large-angle recovery and angle wrapping."
+tags: [recovery]
+map: map00
+initial_error: {dtheta: 1.5707963}

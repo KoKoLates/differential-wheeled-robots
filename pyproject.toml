@@ -1,0 +1,37 @@
+# Dependencies and tool config only — this project is NOT built or installed as a package.
+# Run scripts from the repo root: python main.py --help
+#
+#   pip install --group main     # run simulations / benchmarks
+#   pip install --group test     # main + pytest
+#   pip install --group mpc      # extra solvers for the MPC controllers (later)
+#
+# (`pip install --group` needs pip >= 25.1: python -m pip install -U pip)
+
+[dependency-groups]
+main = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+    "matplotlib>=3.7",
+    "pyyaml>=6.0",
+    "pydantic>=2.5",
+    "pillow>=10",      # GIF export
+]
+test = [
+    { include-group = "main" },
+    "pytest>=7.4",
+]
+mpc = [
+    { include-group = "main" },
+    "osqp>=0.6",
+    "casadi>=3.6",
+]
+learning = [
+    { include-group = "main" },
+    "torch>=2.1",
+    "gymnasium>=0.29",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"

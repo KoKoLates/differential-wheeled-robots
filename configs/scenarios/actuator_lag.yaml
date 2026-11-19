@@ -1,0 +1,4 @@
+description: "Model mismatch: first-order actuator lag (150 ms / 100 ms) and 5% wheel slip."
+tags: [robustness, mismatch]
+map: map02
+plant: {tau_v: 0.15, tau_omega: 0.1, slip: 0.05}

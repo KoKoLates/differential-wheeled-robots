@@ -1,0 +1,19 @@
+name: nominal
+description: "Nominal tracking on every map, plus recovery and stop-and-go. Add your controllers to `controllers`."
+seeds: [0]
+scenarios:
+  - scenario: nominal
+    maps: [map00, map01, map02, map03, map04, map05, map06, map07]
+  - lateral_offset
+  - heading_offset
+  - stop_and_go
+controllers:
+  - pid
+  - controller: pid
+    label: pid_path
+    config: {mode: path}
+  - pure_pursuit
+  # - lqr            # M2
+  # - ilqr           # M3
+  # - linear_mpc     # M4
+  # - nonlinear_mpc  # M5

@@ -1,0 +1,5 @@
+description: Figure-eight 4 m × 2 m (lemniscate of Gerono), self-crossing
+points: ../csv/map02.csv
+length: 12.194
+max_curvature: 2.395
+generator: python maps/generate.py --shape eight --width 4 --height 2

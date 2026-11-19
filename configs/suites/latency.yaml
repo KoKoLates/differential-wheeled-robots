@@ -1,0 +1,14 @@
+name: latency
+description: "Degradation vs sensor and command latency on the figure-eight (100 Hz noisy pose, 5 seeds)."
+seeds: [0, 1, 2, 3, 4]
+maps: [map02]
+scenarios:
+  - scenario: nominal
+    label: sensor_latency
+    overrides: {sensor.period: 0.01, sensor.noise_std: [0.01, 0.01, 0.005]}
+    sweep: {sensor.latency: [0.0, 0.025, 0.05, 0.1, 0.15]}
+  - scenario: nominal
+    label: command_latency
+    overrides: {sensor.period: 0.01, sensor.noise_std: [0.01, 0.01, 0.005]}
+    sweep: {command.latency: [0.0, 0.025, 0.05, 0.1, 0.15]}
+controllers: [pid, pure_pursuit]

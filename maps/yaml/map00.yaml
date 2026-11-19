@@ -1,0 +1,5 @@
+description: Straight line, 6 m
+points: ../csv/map00.csv
+length: 6.0
+max_curvature: 0.0
+generator: python maps/generate.py --shape line --length 6

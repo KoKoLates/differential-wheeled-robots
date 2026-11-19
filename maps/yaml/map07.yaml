@@ -1,0 +1,5 @@
+description: Random cubic spline, 6 control points in 6 m × 4 m, seed 4
+points: ../csv/map07.csv
+length: 12.454
+max_curvature: 1.558
+generator: python maps/generate.py --random --points 6 --seed 4

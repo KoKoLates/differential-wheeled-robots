@@ -1,0 +1,4 @@
+description: "1 s full stop half-way along the path: timing and acceleration."
+tags: [nominal]
+map: map03
+speed: {stops: [0.5], stop_duration: 1.0}

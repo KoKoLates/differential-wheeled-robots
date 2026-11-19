@@ -1,0 +1,8 @@
+description: "Noise and latency together: 50 Hz noisy pose, 40 ms sensor + 50 ms command latency."
+tags: [robustness]
+map: map01
+sensor:
+  period: 0.02
+  noise_std: [0.02, 0.02, 0.01]
+  latency: 0.04
+command: {latency: 0.05}
